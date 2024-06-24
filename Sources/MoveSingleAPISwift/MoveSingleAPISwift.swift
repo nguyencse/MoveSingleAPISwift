@@ -54,6 +54,23 @@ public final class Move {
         let take = Take(takeID: takeID, videoFile: videoFile, moveFile: moveFile, metadata: metadata)
         return take
     }
+    
+    public func createTakeWithMoveFile(
+        takeID: String,
+        videoURL: URL,
+        moveURL: URL,
+        configuration: Configuration = .default,
+        metadata: [String: AnyHashable] = [:]
+    ) async throws -> Take {
+        let moveFile = File(type: .move, localFileName: moveURL.deletingPathExtension().lastPathComponent)
+        let videoFile = File(type: .video, localFileName: videoURL.deletingPathExtension().lastPathComponent)
+        
+        var metadata = metadata
+        metadata["_move_one_camera"] = configuration.camera.rawValue
+        
+        let take = Take(takeID: takeID, videoFile: videoFile, moveFile: moveFile, metadata: metadata)
+        return take
+    }
 
     public func registerForNotifications(clientID: String, events: [NotificationEvents]) async throws {
         let webhookEndpoint = try await graphQLClient.registerForNotifications(clientID: clientID, events: events)
