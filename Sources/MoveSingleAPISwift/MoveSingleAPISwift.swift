@@ -62,7 +62,9 @@ public final class Move {
         configuration: Configuration = .default,
         metadata: [String: AnyHashable] = [:]
     ) async throws -> Take {
-        let moveFile = File(type: .move, localFileName: moveURL.deletingPathExtension().lastPathComponent)
+        let moveData = try Data(contentsOf: moveURL)
+        let moveFileName = try await fileStorage.saveMove(moveData)
+        let moveFile = File(type: .move, localFileName: moveFileName)
         let videoFile = File(type: .video, localFileName: videoURL.deletingPathExtension().lastPathComponent)
         
         var metadata = metadata
